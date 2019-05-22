@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.2.0)
 
-project(Bell103Demod C CXX)
+project(PedalPi C CXX)
 
-set(target_name "bell_103_demodulator")
+set(target_name "pedal")
 
 # Target Names
 set(app "${target_name}")
@@ -16,10 +16,8 @@ set(
     app_sources
 
     # Headers
-    src/goertzel_filter.h
 
     # Sources
-    src/goertzel_filter.cpp
 )
 
 set(
@@ -27,8 +25,7 @@ set(
 
     ${app_sources}
 
-    tests/filter_tests.cpp
-    tests/libsndfile_tests.cpp
+    tests/tests.cpp
 )
 
 
@@ -36,12 +33,6 @@ set(
 #### Libraries
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/external_libraries")
-#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/external_libraries")
-
-find_package(LibSndFile REQUIRED)
-if (LIBSNDFILE_FOUND)
-    include_directories(${LIBSNDFILE_INCLUDE_DIR})
-endif()
 
 
 ######################
@@ -65,14 +56,9 @@ add_executable(
     ${app_sources}
 )
 
-#target_include_directories(
-#    ${app} PUBLIC
-#)
-
 target_link_libraries(
     ${app}
 
-    ${LIBSNDFILE_LIBRARIES}
 )
 
 
@@ -95,6 +81,5 @@ target_link_libraries(
     ${tests}
 
     gtest_main
-    ${LIBSNDFILE_LIBRARIES}
 )
 
