@@ -25,7 +25,7 @@ set(
 
     ${app_sources}
 
-    tests/tests.cpp
+    tests/JackTests.cpp
 )
 
 
@@ -62,7 +62,7 @@ add_executable(
 
 target_link_libraries(
     ${app}
-    JACK_LIBRARY
+    ${JACK_LIBRARY}
 )
 
 
@@ -85,6 +85,6 @@ target_link_libraries(
     ${tests}
 
     gtest_main
-    JACK_LIBRARY
+    ${JACK_LIBRARY}
 )
 
