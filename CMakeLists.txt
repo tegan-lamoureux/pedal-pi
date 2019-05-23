@@ -34,6 +34,10 @@ set(
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/external_libraries")
 
+find_package(JACK REQUIRED)
+if (JACK_FOUND)
+    include_directories(JACK_INCLUDE_DIR)
+endif()
 
 ######################
 #### Google Test Setup
@@ -58,7 +62,7 @@ add_executable(
 
 target_link_libraries(
     ${app}
-
+    JACK_LIBRARY
 )
 
 
@@ -81,5 +85,6 @@ target_link_libraries(
     ${tests}
 
     gtest_main
+    JACK_LIBRARY
 )
 
