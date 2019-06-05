@@ -9,12 +9,15 @@ namespace {
 
 class JackTests : public ::testing::Test {
 protected:
-    virtual void SetUp() {}
+    virtual void SetUp() {
+        this->buffer = 0;
+    }
 
     virtual void TearDown() {}
 
     static jack_port_t *input_port;
     static jack_port_t *output_port;
+    static jack_ringbuffer_t *buffer;
 
     static int jack_process_callback (jack_nframes_t nframes, void *arg) {
         jack_default_audio_sample_t *in, *out;
@@ -22,6 +25,49 @@ protected:
         in = static_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(input_port, nframes));
         out = static_cast<jack_default_audio_sample_t*>(jack_port_get_buffer(output_port, nframes));
         memcpy(out, in, sizeof (jack_default_audio_sample_t) * nframes);
+
+        return 0;
+    }
+
+    static int write_ring(int i) {
+        // get amount of space we can write
+        int availableWrite = jack_ringbuffer_write_space(buffer);
+
+        if (availableWrite >= sizeof(int))
+        {
+            // tell it to write data, keep track of how much was written
+            int written = jack_ringbuffer_write( buffer, (const char*) &i , sizeof(int) );
+
+            // ensure we wrote an entire event
+            if (written != sizeof(int) ) {
+                std::cout << "ERROR! didn't write full integer!" << std::endl;
+            }
+        }
+        else {
+            std::cout << "ERROR! RingBuffer FULL! Skipping..." <<std::endl;
+        }
+    }
+
+    static int process_ring(jack_nframes_t nframes, void* )
+    {
+        // check if there's anything to read
+        int availableRead = jack_ringbuffer_read_space(buffer);
+
+        if ( availableRead >= sizeof(int) )
+        {
+            // create int to read value into
+            int tempInt;
+
+            // read from the buffer
+            int result = jack_ringbuffer_read(buffer, (char*)&tempInt, sizeof(int));
+
+            if ( result != sizeof(int) ) {
+                std::cout << "RtQueue::pull() WARNING! didn't read full event!" << std::endl;
+                return -1;
+            }
+
+            std::cout << "Jack thread says int = " << tempInt << std::endl;
+        }
 
         return 0;
     }
@@ -34,6 +80,7 @@ protected:
 // Static instantiation.
 jack_port_t* JackTests::input_port;
 jack_port_t* JackTests::output_port;
+jack_ringbuffer_t* JackTests::buffer;
 
 
 TEST_F(JackTests, DISABLED_can_use_jack) {
@@ -88,10 +135,36 @@ TEST_F(JackTests, can_run_basic_client_example) {
     jack_client_close (client);
 }
 
+
 /** @brief Example taken from: http://harryhaaren.blogspot.com/2011/11/tutorial-jack-ringbuffers.html
  */
 TEST_F(JackTests, can_use_ring_buffer) {
+    std::cout << "Ring buffer tutorial" << std::endl;
 
+    // create an instance of a ringbuffer that will hold up to 20 integers,
+    // let the pointer point to it
+    this->buffer = jack_ringbuffer_create(20);
+
+    // lock the buffer into memory, this is *NOT* realtime safe, do it before
+    // using the buffer!
+    int res = jack_ringbuffer_mlock(this->buffer);
+
+    // check if we've locked the memory successfully
+    if ( res ) {
+        std::cout << "Error locking memory!" << std::endl;
+    }
+
+    // create a JACK client, register the process callback and activate
+    jack_client_t* client = jack_client_open ( "RingbufferDemo", JackNullOption , 0 , 0 );
+//    jack_set_process_callback  (client, process_ring , 0);
+//    jack_activate(client);
+
+//    for ( int i = 0; i < 2; i++) {
+//        // write an event, then pause a while, JACK will get a go and then
+//        // we'll write another event... etc
+//        write_ring(i);
+//        sleep(0.1);
+//    }
 }
 
 }
