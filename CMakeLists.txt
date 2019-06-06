@@ -17,9 +17,11 @@ set(
 
     # Headers
     src/distortion.h
+    src/echo.h
 
     # Sources
     src/distortion.cpp
+    src/echo.cpp
 )
 
 set(
@@ -29,6 +31,7 @@ set(
 
     tests/jack_tests.cpp
     tests/distortion_tests.cpp
+    tests/echo_tests.cpp
 )
 
 

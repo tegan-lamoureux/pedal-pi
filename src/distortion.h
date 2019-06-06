@@ -8,7 +8,8 @@
 class Distortion
 {
 public:
-    static bool AddDistortion(std::vector<double>& buffer, double magnitude);
+	// FIXME: Add sample rate to this. Or do I not need it?
+	static bool AddDistortion(std::vector<double>& buffer, double gain);
 
 private:
     Distortion() = delete;
