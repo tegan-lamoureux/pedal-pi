@@ -26,7 +26,7 @@ jack_ringbuffer_t* EchoTests::buffer;
 
 TEST_F(EchoTests, can_use_echo) {
     vector<double> test;
-	Echo::AddEcho_FIR(test, 0.0, 0.0, 0.0, 0.0);
+	Echo::AddEcho_FIR(test, 0.0, 0.0, 0.0);
 }
 
 }

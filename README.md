@@ -18,6 +18,7 @@ It's cmake, so to build the application and unit tests:
 * https://dsp.stackexchange.com/questions/2792/high-quality-reverb-algorithm
 * https://ccrma.stanford.edu/~jos/pasp/Schroeder_Reverberator_called_JCRev.html
 * https://github.com/jackaudio/example-clients
+* http://users.cs.cf.ac.uk/Dave.Marshall/CM0268/PDF/10_CM0268_Audio_FX.pdf
 
 #### TODO:
 * For presentation/writeup, if just making a lib, run gcov and show a nice graph to prove test coverage.

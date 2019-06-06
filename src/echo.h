@@ -9,24 +9,24 @@ class Echo
 {
 public:
 	/**
-	 * @brief AddEcho_CombFIR is a finite impulse response filter...
+	 * @brief A finite impulse response comb filter to add echo / delay to a signal.
 	 * @param buffer
 	 * @param magnitude
 	 * @param feedback
 	 * @param time
 	 * @return
 	 */
-	static bool AddEcho_FIR(std::vector<double>& buffer, double gain, double feedback, double time, double sample_rate);
+	static bool AddEcho_FIR(std::vector<double>& buffer, double gain, double time, double sample_rate);
 
 	/**
-	 * @brief AddEcho_CombIIR is an infinite impulse response filter...
+	 * @brief An infinite impulse response comb filter to add echo / delay to a signal.
 	 * @param buffer
 	 * @param magnitude
 	 * @param feedback
 	 * @param time
 	 * @return
 	 */
-	static bool AddEcho_IIR(std::vector<double>& buffer, double gain, double feedback, double time, double sample_rate);
+	static bool AddEcho_IIR(std::vector<double>& buffer, double gain, double time, double sample_rate);
 
 	/**
 	 * @brief AddEcho_CombUniversal is a combination of both, and can form any comb filter, allpass, or delay.
@@ -36,7 +36,7 @@ public:
 	 * @param time
 	 * @return
 	 */
-	static bool AddEcho_Universal(std::vector<double>& buffer, double gain, double feedback, double time, double sample_rate);
+	static bool AddEcho_Universal(std::vector<double>& buffer, double gain, double time, double sample_rate);
 
 private:
     Echo() = delete;
