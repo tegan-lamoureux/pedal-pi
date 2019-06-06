@@ -16,8 +16,10 @@ set(
     app_sources
 
     # Headers
+    src/distortion.h
 
     # Sources
+    src/distortion.cpp
 )
 
 set(
@@ -25,7 +27,8 @@ set(
 
     ${app_sources}
 
-    tests/JackTests.cpp
+    tests/jack_tests.cpp
+    tests/distortion_tests.cpp
 )
 
 
