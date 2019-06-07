@@ -156,10 +156,7 @@ TEST_F(JackTests, can_use_ring_buffer_single_byte_read_write) {
 /** @brief Example modified from: http://harryhaaren.blogspot.com/2011/11/tutorial-jack-ringbuffers.html
  *  (which wasn't working.)
  */
-
-// TODO: Swich the  couts to asserts.
-// also TODO: fucking do this, it isn't done yet.
-TEST_F(JackTests, can_use_ring_buffer_vector_read_write) {
+TEST_F(JackTests, DISABLED_can_use_ring_buffer_vector_read_write) {
     this->buffer = jack_ringbuffer_create(1024*sizeof(int));
     int res = jack_ringbuffer_mlock(this->buffer);
 
