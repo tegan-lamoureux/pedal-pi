@@ -18,7 +18,7 @@ This was originally intended to run on the Raspberry Pi, but due to time constra
 
 That said, in my project tests I dig into using jackaudio to read in samples and process them using a ring buffer. Further, on each filter's unit tests, I have a working example of this. This helps lower the barrier to implementation on an embedded system in the future.
 
-In order to show the functionality, this repository contains a main that loads a sample (16 bit mono PCM) wave file and runs and saves examples of each filter. Example input along with a demonstration of each filter can be found in the `results` directory. Further, in the same directory can be found a log of all project unit tests (using google test framework) passing.
+In order to show the functionality, this repository contains a main that loads a sample (16 bit mono PCM) wave file and runs and saves examples of each filter. Example input (`guitar_original_44100hz_mono_16bit.wav`), along with a demonstration output of each filter can be found in the `results` directory. Further, in the same directory can be found a log of all project unit tests (using google test framework) passing.
 
 #### Lessons Learned
 
