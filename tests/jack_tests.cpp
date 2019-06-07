@@ -19,6 +19,7 @@ protected:
     static jack_port_t *output_port;
     static jack_ringbuffer_t *buffer;
 
+    // Callback for basic client test.
     static int jack_process_callback (jack_nframes_t nframes, void *arg) {
         jack_default_audio_sample_t *in, *out;
 
@@ -29,6 +30,7 @@ protected:
         return 0;
     }
 
+    // Callback for ring buffer test.
     // Can't use asserts in static member functions, so we just exit here with
     // a message if the test fails.
     static int write_ring(unsigned int i) {
@@ -37,17 +39,16 @@ protected:
         unsigned int bytesToWrite = sizeof(unsigned int);
         if (availableBytesToWrite < bytesToWrite){
             // We're not ready yet.
-            cout << "Jack write error! availableBytesToWrite: " << availableBytesToWrite << endl;
             return 1;
         }
 
         int bytesWritten = jack_ringbuffer_write(buffer, reinterpret_cast<char*>(&i) , bytesToWrite);
         if (bytesWritten != bytesToWrite){
-            cout << "Jack write fatal error! bytesWritten != bytesToWrite" << endl;
             return 2;
         }
     }
 
+    // Callback for ring buffer test.
     // Can't use asserts in static member functions, so we just exit here with
     // a message if the test fails.
     static int process_ring(jack_nframes_t nframes, void*) {
@@ -59,7 +60,6 @@ protected:
         bytesRead = jack_ringbuffer_read(buffer, reinterpret_cast<char*>(&readValue), bytesToRead);
 
         if (bytesRead != bytesToRead){
-            cout << "Jack read error! bytesRead != bytesToRead" << endl;
             return 1;
         }
 
@@ -71,14 +71,14 @@ protected:
 };
 
 
-// Static instantiation.
+// Static instantiations.
 jack_port_t* JackTests::input_port;
 jack_port_t* JackTests::output_port;
 jack_ringbuffer_t* JackTests::buffer;
 
 
 
-TEST_F(JackTests, DISABLED_can_use_jack) {
+TEST_F(JackTests, can_use_jack) {
     this->client = jack_client_open("testing", JackNullOption, &this->status);
     ASSERT_NE(nullptr, client);
 
@@ -96,7 +96,7 @@ TEST_F(JackTests, can_run_basic_client_example) {
 
     client = jack_client_open (client_name, options, &status, server_name);
     ASSERT_NE(nullptr, client);
-    EXPECT_NE(0, status);
+    EXPECT_EQ(0, status);
     ASSERT_NE(0, JackServerStarted);
 
     if (status & JackNameNotUnique) {
@@ -120,13 +120,6 @@ TEST_F(JackTests, can_run_basic_client_example) {
     EXPECT_EQ(0, input_connect_result);
     free(ports);
 
-    // Hook up and test Output port.
-    ports = jack_get_ports(client, NULL, NULL, JackPortIsPhysical|JackPortIsInput);
-    ASSERT_NE(nullptr, ports);
-    auto output_connect_result = jack_connect(client, ports[0], jack_port_name(output_port));
-    EXPECT_EQ(0, output_connect_result);
-    free (ports);
-
     jack_client_close (client);
 }
 
@@ -139,9 +132,7 @@ TEST_F(JackTests, can_use_ring_buffer_single_byte_read_write) {
     int res = jack_ringbuffer_mlock(this->buffer);
 
     // check if we've locked the memory successfully
-    if ( res ) {
-        cout << "Error locking memory!" << endl;
-    }
+    ASSERT_EQ(0, res);
 
     // create a JACK client, register the process callback and activate
     jack_client_t* client = jack_client_open ( "RingbufferDemo", JackNullOption , 0 , 0 );
@@ -173,9 +164,7 @@ TEST_F(JackTests, can_use_ring_buffer_vector_read_write) {
     int res = jack_ringbuffer_mlock(this->buffer);
 
     // check if we've locked the memory successfully
-    if ( res ) {
-        cout << "Error locking memory!" << endl;
-    }
+    ASSERT_EQ(0, res);
 
     // create a JACK client, register the process callback and activate
     jack_client_t* client = jack_client_open ( "RingbufferDemo", JackNullOption , 0 , 0 );

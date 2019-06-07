@@ -6,13 +6,13 @@
 #include <jack/jack.h>
 #include <jack/ringbuffer.h>
 
-#include "distortion.h"
+#include "delay.h"
 
 using namespace std;
 
 namespace {
 
-class DistortionTests : public ::testing::Test {
+class EchoTests : public ::testing::Test {
 protected:
     virtual void SetUp() {}
 
@@ -21,16 +21,15 @@ protected:
     static jack_ringbuffer_t *buffer;
 };
 
-jack_ringbuffer_t* DistortionTests::buffer;
+jack_ringbuffer_t* EchoTests::buffer;
 
 
-TEST_F(DistortionTests, can_use_distortion) {
+TEST_F(EchoTests, can_use_echo) {
     vector<double> test;
-    Distortion::AddDistortion(test, 0.0);
+    Delay::AddEcho_FIR(test, 0.0, 0.0, 0.0);
 }
 
-
-TEST_F(DistortionTests, can_run_algorithm_one_pass) {
+TEST_F(EchoTests, can_run_fir_algorithm) {
     vector<double> buffer;
     const int buffer_length = 1024;
     const int buffer_magnitude = 128;
@@ -40,12 +39,11 @@ TEST_F(DistortionTests, can_run_algorithm_one_pass) {
         buffer.emplace_back(rand() % buffer_magnitude);
     }
 
-    // Call distortion algo on it.
-    ASSERT_TRUE(Distortion::AddDistortion(buffer, 0.5));
+    // Call echo algo on it.
+    ASSERT_TRUE(Delay::AddEcho_FIR(buffer, 0.5, 0.5, 128));
 }
 
-
-TEST_F(DistortionTests, can_run_algorithm_multiple_passes_multiple_magnitudes) {
+TEST_F(EchoTests, can_run_iir_algorithm) {
     vector<double> buffer;
     const int buffer_length = 1024;
     const int buffer_magnitude = 128;
@@ -55,14 +53,25 @@ TEST_F(DistortionTests, can_run_algorithm_multiple_passes_multiple_magnitudes) {
         buffer.emplace_back(rand() % buffer_magnitude);
     }
 
-    // Call distortion algo on it.
-    for (int test_loop = 0; test_loop < 100; test_loop++) {
-        ASSERT_TRUE(Distortion::AddDistortion(buffer, 0.5));
-    }
+    // Call echo algo on it.
+    ASSERT_TRUE(Delay::AddEcho_IIR(buffer, 0.5, 0.5, 128));
 }
 
+TEST_F(EchoTests, can_run_universal_algorithm) {
+    vector<double> buffer;
+    const int buffer_length = 1024;
+    const int buffer_magnitude = 128;
 
-TEST_F(DistortionTests, can_run_algorithm_on_jack_ring_buffer) {
+    // Populate with noise test data.
+    for (int sample = 0; sample < buffer_length; sample++) {
+        buffer.emplace_back(rand() % buffer_magnitude);
+    }
+
+    // Call echo algo on it.
+    ASSERT_TRUE(Delay::AddEcho_Universal(buffer, 0.5, -0.1, 0.1, 0.5, 0.5, 128));
+}
+
+TEST_F(EchoTests, can_run_algorithms_on_jack_ring_buffer) {
     this->buffer = jack_ringbuffer_create(1200 * sizeof(double));
     vector<double> retrievedData;
 
@@ -83,7 +92,14 @@ TEST_F(DistortionTests, can_run_algorithm_on_jack_ring_buffer) {
     }
 
     // Process data.
-    ASSERT_TRUE(Distortion::AddDistortion(retrievedData, 0.5));
+    vector<double> fir_buffer(retrievedData);
+    vector<double> iir_buffer(retrievedData);
+    vector<double> universal_buffer(retrievedData);
+
+    ASSERT_TRUE(Delay::AddEcho_FIR(fir_buffer, 0.5, 0.5, 128));
+    ASSERT_TRUE(Delay::AddEcho_IIR(iir_buffer, 0.5, 0.5, 128));
+    ASSERT_TRUE(Delay::AddEcho_Universal(universal_buffer, 0.5, -0.1, 0.1, 0.5, 0.5, 128));
 }
 
 }
+

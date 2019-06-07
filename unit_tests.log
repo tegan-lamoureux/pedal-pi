@@ -1,0 +1,69 @@
+22:30:39: Starting /home/tegan/projects/pedal-pi/build/pedal_unit_tests ...
+Running main() from /home/tegan/projects/pedal-pi/build/googletest-src/googletest/src/gtest_main.cc
+[==========] Running 13 tests from 3 test suites.
+[----------] Global test environment set-up.
+[----------] 4 tests from JackTests
+[ RUN      ] JackTests.can_use_jack
+[       OK ] JackTests.can_use_jack (57 ms)
+[ RUN      ] JackTests.can_run_basic_client_example
+Cannot use real-time scheduling (RR/5)(1: Operation not permitted)
+JackClient::AcquireSelfRealTime error
+[       OK ] JackTests.can_run_basic_client_example (86 ms)
+[ RUN      ] JackTests.can_use_ring_buffer_single_byte_read_write
+Cannot use real-time scheduling (RR/5)(1: Operation not permitted)
+JackClient::AcquireSelfRealTime error
+[ MESSAGE: ] Processed test loop: 0
+[ MESSAGE: ] Processed test loop: 1
+[ MESSAGE: ] Processed test loop: 2
+[ MESSAGE: ] Processed test loop: 3
+[ MESSAGE: ] Processed test loop: 4
+[ MESSAGE: ] Processed test loop: 5
+[ MESSAGE: ] Processed test loop: 6
+[ MESSAGE: ] Processed test loop: 7
+[ MESSAGE: ] Processed test loop: 8
+[ MESSAGE: ] Processed test loop: 9
+[       OK ] JackTests.can_use_ring_buffer_single_byte_read_write (10008 ms)
+[ RUN      ] JackTests.can_use_ring_buffer_vector_read_write
+Cannot use real-time scheduling (RR/5)(1: Operation not permitted)
+JackClient::AcquireSelfRealTime error
+[ MESSAGE: ] Processed test loop: 0
+[ MESSAGE: ] Processed test loop: 1
+[ MESSAGE: ] Processed test loop: 2
+[ MESSAGE: ] Processed test loop: 3
+[ MESSAGE: ] Processed test loop: 4
+[ MESSAGE: ] Processed test loop: 5
+[ MESSAGE: ] Processed test loop: 6
+[ MESSAGE: ] Processed test loop: 7
+[ MESSAGE: ] Processed test loop: 8
+[ MESSAGE: ] Processed test loop: 9
+[       OK ] JackTests.can_use_ring_buffer_vector_read_write (10026 ms)
+[----------] 4 tests from JackTests (20177 ms total)
+
+[----------] 4 tests from DistortionTests
+[ RUN      ] DistortionTests.can_use_distortion
+[       OK ] DistortionTests.can_use_distortion (0 ms)
+[ RUN      ] DistortionTests.can_run_algorithm_one_pass
+[       OK ] DistortionTests.can_run_algorithm_one_pass (0 ms)
+[ RUN      ] DistortionTests.can_run_algorithm_multiple_passes_multiple_magnitudes
+[       OK ] DistortionTests.can_run_algorithm_multiple_passes_multiple_magnitudes (8 ms)
+[ RUN      ] DistortionTests.can_run_algorithm_on_jack_ring_buffer
+[       OK ] DistortionTests.can_run_algorithm_on_jack_ring_buffer (0 ms)
+[----------] 4 tests from DistortionTests (8 ms total)
+
+[----------] 5 tests from EchoTests
+[ RUN      ] EchoTests.can_use_echo
+[       OK ] EchoTests.can_use_echo (0 ms)
+[ RUN      ] EchoTests.can_run_fir_algorithm
+[       OK ] EchoTests.can_run_fir_algorithm (0 ms)
+[ RUN      ] EchoTests.can_run_iir_algorithm
+[       OK ] EchoTests.can_run_iir_algorithm (0 ms)
+[ RUN      ] EchoTests.can_run_universal_algorithm
+[       OK ] EchoTests.can_run_universal_algorithm (0 ms)
+[ RUN      ] EchoTests.can_run_algorithms_on_jack_ring_buffer
+[       OK ] EchoTests.can_run_algorithms_on_jack_ring_buffer (1 ms)
+[----------] 5 tests from EchoTests (1 ms total)
+
+[----------] Global test environment tear-down
+[==========] 13 tests from 3 test suites ran. (20187 ms total)
+[  PASSED  ] 13 tests.
+22:30:59: /home/tegan/projects/pedal-pi/build/pedal_unit_tests exited with code 0
