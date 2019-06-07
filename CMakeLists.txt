@@ -45,6 +45,12 @@ if (JACK_FOUND)
     include_directories(JACK_INCLUDE_DIR)
 endif()
 
+find_package(LibSndFile REQUIRED)
+if (LIBSNDFILE_FOUND)
+    include_directories(${LIBSNDFILE_INCLUDE_DIR})
+endif()
+
+
 ######################
 #### Google Test Setup
 #
@@ -69,6 +75,7 @@ add_executable(
 target_link_libraries(
     ${app}
     ${JACK_LIBRARY}
+    ${LIBSNDFILE_LIBRARIES}
 )
 
 
@@ -92,5 +99,6 @@ target_link_libraries(
 
     gtest_main
     ${JACK_LIBRARY}
+    ${LIBSNDFILE_LIBRARIES}
 )
 

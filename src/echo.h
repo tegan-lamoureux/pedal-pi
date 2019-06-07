@@ -36,7 +36,7 @@ public:
 	 * @param time
 	 * @return
 	 */
-	static bool AddEcho_Universal(std::vector<double>& buffer, double gain, double time, double sample_rate);
+    static bool AddEcho_Universal(std::vector<double>& buffer, double gain, double feedforward, double feedback, double blend, double time, double sample_rate);
 
 private:
     Echo() = delete;

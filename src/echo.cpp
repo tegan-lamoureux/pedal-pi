@@ -9,67 +9,87 @@ using namespace std;
 // original sample.
 
 bool Echo::AddEcho_FIR(std::vector<double>& buffer, double gain, double time, double sample_rate) {
-	const double buffer_length_seconds = static_cast<double>(buffer.size()) / sample_rate;
-	const int delay_time_in_samples = static_cast<int>(time * sample_rate);
+    const double buffer_length_seconds = static_cast<double>(buffer.size()) / sample_rate;
+    const int delay_time_in_samples = static_cast<int>(time * sample_rate);
 
-	// TODO: Check this and the other ones as well for better error handling.
-	// also make sure all casing is consistent.
-	if (buffer.empty() || gain > 1.0 || time < buffer_length_seconds) {
-		return false;
-	}
+    // TODO: Check this and the other ones as well for better error handling.
+    // also make sure all casing is consistent.
+    if (buffer.empty() || gain > 1.0 || time > buffer_length_seconds) {
+        return false;
+    }
 
-	// Initialize delay tracking structure. Holds input data offset by delay time and is
-	// used to modify input signal. Init to zero because we don't want to affect the start
-	// of the sample before first delay kicks in.
-	queue<double> delay_line;
-	for (int i = 0; i < delay_time_in_samples; i++) {
-		delay_line.push(0);
-	}
+    // Initialize delay tracking structure. Holds input data offset by delay time and is
+    // used to modify input signal. Init to zero because we don't want to affect the start
+    // of the sample before first delay kicks in.
+    queue<double> delay_line;
+    for (int i = 0; i < delay_time_in_samples; i++) {
+        delay_line.push(0);
+    }
 
-	// For every sample:
-	// 1. Add sample from offset delay line.
-	// 2. Update back offset delay line with current sample.
-	for (auto sample = buffer.begin(); sample != buffer.end(); sample++) {
-		auto cached_sample = *sample;
-		*sample = *sample + (gain * delay_line.front());
-		delay_line.push(cached_sample);
-		delay_line.pop();
-	}
+    // Process signal.
+    for (auto sample = buffer.begin(); sample != buffer.end(); sample++) {
+        auto cached_sample = *sample;
+        *sample = *sample + (gain * delay_line.front());
+        delay_line.push(cached_sample);
+        delay_line.pop();
+    }
 
-	return true;
+    return true;
 }
 
 bool Echo::AddEcho_IIR(std::vector<double>& buffer, double gain, double time, double sample_rate) {
-	const double buffer_length_seconds = static_cast<double>(buffer.size()) / sample_rate;
-	const int delay_time_in_samples = static_cast<int>(time * sample_rate);
+    const double buffer_length_seconds = static_cast<double>(buffer.size()) / sample_rate;
+    const int delay_time_in_samples = static_cast<int>(time * sample_rate);
 
-	// TODO: Check this and the other ones as well for better error handling.
-	// also make sure all casing is consistent.
-	if (buffer.empty() || gain > 1.0 || time < buffer_length_seconds) {
-		return false;
-	}
+    // TODO: Check this and the other ones as well for better error handling.
+    // also make sure all casing is consistent.
+    if (buffer.empty() || gain > 1.0 || time > buffer_length_seconds) {
+        return false;
+    }
 
-	// Initialize delay tracking structure. Holds input data offset by delay time and is
-	// used to modify input signal. Init to zero because we don't want to affect the start
-	// of the sample before first delay kicks in.
-	queue<double> delay_line;
-	for (int i = 0; i < delay_time_in_samples; i++) {
-		delay_line.push(0);
-	}
+    // Initialize delay tracking structure. Holds input data offset by delay time and is
+    // used to modify input signal. Init to zero because we don't want to affect the start
+    // of the sample before first delay kicks in.
+    queue<double> delay_line;
+    for (int i = 0; i < delay_time_in_samples; i++) {
+        delay_line.push(0);
+    }
 
-	// For every sample:
-	// 1. Add sample from offset delay line.
-	// 2. Update back offset delay line with current modified sample.
-	for (auto sample = buffer.begin(); sample != buffer.end(); sample++) {
-		*sample = *sample + (gain * delay_line.front());
-		delay_line.push(*sample);
-		delay_line.pop();
-	}
+    // Process signal.
+    for (auto sample = buffer.begin(); sample != buffer.end(); sample++) {
+        *sample = *sample + (gain * delay_line.front());
+        delay_line.push(*sample);
+        delay_line.pop();
+    }
 
-	return true;}
+    return true;
+}
 
-//bool Echo::AddEcho_Universal(std::vector<double>& buffer, double magnitude, double feedback, double time, double sample_rate) {
+bool Echo::AddEcho_Universal(std::vector<double>& buffer, double gain, double feedforward, double feedback, double blend, double time, double sample_rate) {
+    const double buffer_length_seconds = static_cast<double>(buffer.size()) / sample_rate;
+    const int delay_time_in_samples = static_cast<int>(time * sample_rate);
 
-//	return true;
-//}
+    // TODO: Check this and the other ones as well for better error handling.
+    // also make sure all casing is consistent.
+    if (buffer.empty() || gain > 1.0 || time > buffer_length_seconds) {
+        return false;
+    }
 
+    // Initialize delay tracking structure. Holds input data offset by delay time and is
+    // used to modify input signal. Init to zero because we don't want to affect the start
+    // of the sample before first delay kicks in.
+    queue<double> delay_line;
+    for (int i = 0; i < delay_time_in_samples; i++) {
+        delay_line.push(0);
+    }
+
+    // Process with aspects of both FIR and IIR filter.
+    for (auto sample = buffer.begin(); sample != buffer.end(); sample++) {
+        double processed = *sample + feedback + delay_line.front();
+        *sample = feedforward * delay_line.front() + blend * processed;
+        delay_line.push(processed);
+        delay_line.pop();
+    }
+
+    return true;
+}
